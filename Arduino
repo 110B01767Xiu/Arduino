@@ -1,5 +1,4 @@
-#include "LedControl.h" // LedControl library is used for controlling a LED matrix. Find it using Library Manager or download zip here: https://github.com/wayoda/LedControl
-
+#include "LedControl.h" 
 
 // --------------------------------------------------------------- //
 // ------------------------- user config ------------------------- //
@@ -7,20 +6,19 @@
 
 // there are defined all the pins
 struct Pin {
-  static const short joystickX = A2;   // joystick X axis pin
-  static const short joystickY = A3;   // joystick Y axis pin
-  static const short joystickVCC = 15; // virtual VCC for the joystick (Analog 1) (to make the joystick connectable right next to the arduino nano)
-  static const short joystickGND = 14; // virtual GND for the joystick (Analog 0) (to make the joystick connectable right next to the arduino nano)
+  static const short joystickX = A2;   
+  static const short joystickY = A3;   
+  static const short joystickVCC = 15; 
+  static const short joystickGND = 14; 
 
-  static const short potentiometer = A5; // potentiometer for snake speed control
-
-  static const short CLK = 10;   // clock for LED matrix
-  static const short CS  = 11;  // chip-select for LED matrix
-  static const short DIN = 12; // data-in for LED matrix
+ 
+  static const short CLK = 10;   
+  static const short CS  = 11;  
+  static const short DIN = 12; 
 };
 
 // LED matrix brightness: between 0(darkest) and 15(brightest)
-const short intensity = 6;
+const short intensity = 8;
 
 // lower = faster message scrolling
 const short messageSpeed = 5;
@@ -43,8 +41,7 @@ void loop() {
   calculateSnake();  // calculates snake parameters
   handleGameStates();
 
-  // uncomment this if you want the current game board to be printed to the serial (slows down the game a bit)
-  // dumpGameBoard();
+  
 }
 
 
@@ -85,13 +82,13 @@ int snakeSpeed = 1; // will be set according to potentiometer value, cannot be 0
 int snakeDirection = 0; // if it is 0, the snake does not move
 
 // direction constants
-const short up     = 1;
-const short right  = 2;
-const short down   = 3; // 'down - 2' must be 'up'
-const short left   = 4; // 'left - 2' must be 'right'
+const short up     = 2;
+const short right  = 3;
+const short down   = 4; // 'down - 2' must be 'up'
+const short left   = 5; // 'left - 2' must be 'right'
 
 // threshold where movement of the joystick will be accepted
-const int joystickThreshold = 160;
+const int joystickThreshold = 250;
 
 // artificial logarithmity (steepness) of the potentiometer (-1 = linear, 1 = natural, bigger = steeper (recommended 0...1))
 const float logarithmity = 0.4;
@@ -132,8 +129,8 @@ void scanJoystick() {
 
   while (millis() < timestamp + snakeSpeed) {
     // calculate snake speed exponentially (10...1000ms)
-    float raw = mapf(analogRead(Pin::potentiometer), 0, 1023, 0, 1);
-    snakeSpeed = mapf(pow(raw, 3.5), 0, 1, 10, 1000); // change the speed exponentially
+    float raw = mapf(analogRead(100), 0, 1023, 0, 1);
+    snakeSpeed = mapf ( pow (raw, 3.5 ), 0 , 10 , 100, 500); //以指數方式改變速度
     if (snakeSpeed == 0) snakeSpeed = 1; // safety: speed can not be 0
 
     // determine the direction of the snake
@@ -505,13 +502,7 @@ void showSnakeMessage() {
         }
       }
 
-      // if the joystick is moved, exit the message
-      if (analogRead(Pin::joystickY) < joystickHome.y - joystickThreshold
-              || analogRead(Pin::joystickY) > joystickHome.y + joystickThreshold
-              || analogRead(Pin::joystickX) < joystickHome.x - joystickThreshold
-              || analogRead(Pin::joystickX) > joystickHome.x + joystickThreshold) {
-        return; // return the lambda function
-      }
+     
     }
   }();
 
@@ -538,13 +529,7 @@ void showGameOverMessage() {
         }
       }
 
-      // if the joystick is moved, exit the message
-      if (analogRead(Pin::joystickY) < joystickHome.y - joystickThreshold
-              || analogRead(Pin::joystickY) > joystickHome.y + joystickThreshold
-              || analogRead(Pin::joystickX) < joystickHome.x - joystickThreshold
-              || analogRead(Pin::joystickX) > joystickHome.x + joystickThreshold) {
-        return; // return the lambda function
-      }
+      
     }
   }();
 
@@ -598,24 +583,14 @@ void showScoreMessage(int score) {
         }
       }
 
-      // if the joystick is moved, exit the message
-      if (analogRead(Pin::joystickY) < joystickHome.y - joystickThreshold
-              || analogRead(Pin::joystickY) > joystickHome.y + joystickThreshold
-              || analogRead(Pin::joystickX) < joystickHome.x - joystickThreshold
-              || analogRead(Pin::joystickX) > joystickHome.x + joystickThreshold) {
-        return; // return the lambda function
-      }
+     
+      
     }
   }();
 
   matrix.clearDisplay(0);
 
-  //  // wait for joystick co come back
-  //  while (analogRead(Pin::joystickY) < joystickHome.y - joystickThreshold
-  //          || analogRead(Pin::joystickY) > joystickHome.y + joystickThreshold
-  //          || analogRead(Pin::joystickX) < joystickHome.x - joystickThreshold
-  //          || analogRead(Pin::joystickX) > joystickHome.x + joystickThreshold) {}
-
+ 
 }
 
 
